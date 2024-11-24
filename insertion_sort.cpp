@@ -1,11 +1,15 @@
 #include <iostream>
-#include <ctime>     // For srand and time
-#include <algorithm> // For std::copy
+#include <ctime>
+#include <algorithm>
 #include <SFML/Graphics.hpp>
+#include <thread>
 
 using namespace std;
 
-const int arrsize = 150;
+const int WINDOW_HEIGHT = 800;
+const int WINDW_WIDTH = 600;
+
+const int arrsize = 50;
 int arr[arrsize];
 
 void fill_array()
@@ -16,7 +20,7 @@ void fill_array()
     }
 }
 
-void insertion_sort()
+void insertion_sort(sf::RenderWindow& window)
 {
     for (int i = 1; i < arrsize; i++)
     {
@@ -27,11 +31,22 @@ void insertion_sort()
             arr[j] = arr[j - 1];
             arr[j - 1] = temp;
             j--;
+
+            window.clear();
+            for (int k = 0; k < arrsize; k++)
+            {
+                sf::RectangleShape rect(sf::Vector2f(5, arr[k]));
+                rect.setPosition(k * 8, WINDOW_HEIGHT - arr[k]);
+                rect.setFillColor(sf::Color::Green);
+                window.draw(rect);
+            }
+            window.display();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Slow down for visualization
         }
     }
 }
 
-void selection_sort()
+void selection_sort(sf::RenderWindow& window)
 {
     for (int i = 0; i < arrsize - 1; i++)
     {
@@ -46,6 +61,17 @@ void selection_sort()
         int temp = arr[i];
         arr[i] = arr[min];
         arr[min] = temp;
+
+        window.clear();
+        for (int k = 0; k < arrsize; k++)
+        {
+            sf::RectangleShape rect(sf::Vector2f(5, arr[k]));
+            rect.setPosition(k * 8, WINDOW_HEIGHT - arr[k]);
+            rect.setFillColor(sf::Color::Green);
+            window.draw(rect);
+        }
+        window.display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Slow down for visualization
     }
 }
 
@@ -95,7 +121,7 @@ void merge_sort(int array[], int left, int right)
     merge(array, left, half, right);
 }
 
-void bubble_sort()
+void bubble_sort(sf::RenderWindow window)
 {
     for (int i = 0; i < arrsize - 1; i++)
     {
@@ -107,6 +133,17 @@ void bubble_sort()
                 arr[j] = arr[j + 1];
                 arr[j + 1] = temp;
             }
+
+            window.clear();
+            for (int k = 0; k < arrsize; k++)
+            {
+                sf::RectangleShape rect(sf::Vector2f(5, arr[k]));
+                rect.setPosition(k * 8, WINDOW_HEIGHT - arr[k]);
+                rect.setFillColor(sf::Color::Green);
+                window.draw(rect);
+            }
+            window.display();
+            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Slow down for visualization
         }
     }
 }
@@ -163,15 +200,22 @@ int main()
     {
     case 'i':
     {
-        cout << "Original Array:\n";
+
         fill_array();
-        print_array();
 
-        // Test Insertion Sort
+        sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDW_WIDTH), "My window");
+        while (window.isOpen())
+        {
+            sf::Event event;
+            while (window.pollEvent(event))
+            {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+            }
 
-        cout << "\nTesting Insertion Sort:\n";
-        insertion_sort();
-        print_array();
+            insertion_sort(window);
+            break;
+        }
         break;
     }
     case 's':
@@ -181,7 +225,7 @@ int main()
         print_array();
 
         cout << "\nTesting Selection Sort:\n";
-        selection_sort();
+        // selection_sort();
         print_array(); // Test Selection Sort
         break;
     }
@@ -206,7 +250,7 @@ int main()
         print_array();
 
         cout << "\nTesting Bubble Sort:\n";
-        bubble_sort();
+        // bubble_sort();
         print_array(); // Test Bubble Sort
         break;
     }
