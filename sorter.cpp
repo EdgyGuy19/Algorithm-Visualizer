@@ -71,6 +71,7 @@ void selection_sort(sf::RenderWindow &window)
         int temp = arr[i];
         arr[i] = arr[min];
         arr[min] = temp;
+        visualize(window, i);
     }
 }
 
@@ -120,7 +121,7 @@ void merge_sort(int array[], int left, int right)
     merge(array, left, half, right);
 }
 
-void bubble_sort(sf::RenderWindow window)
+void bubble_sort(sf::RenderWindow &window)
 {
     for (int i = 0; i < arrsize - 1; i++)
     {
@@ -184,6 +185,17 @@ int main()
     srand(time(0));
     fill_array();
 
+    char input;
+
+    cout << "Choose a sorting algorithm: \n";
+    cout << "1. Insertion Sort\n";
+    cout << "2. Selection Sort\n";
+    cout << "3. Buble Sort\n";
+    cout << "4. Merge Sort\n";
+    cout << "5. Quick Sort\n";
+
+    cin >> input;
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -194,7 +206,31 @@ int main()
                 window.close();
             }
         }
-        insertion_sort(window);
+        switch (input)
+        {
+        case '1':
+            insertion_sort(window);
+            break;
+
+        case '2':
+            selection_sort(window);
+            break;
+
+        case '3':
+            bubble_sort(window);
+            break;
+
+        case '4':
+            merge_sort(arr, 0, arrsize - 1);
+            break;
+
+        case '5':
+            quick_sort(arr, 0, arrsize - 1);
+            break;    
+        
+        default:
+            break;
+        }
         break;
     }
     return 0;
