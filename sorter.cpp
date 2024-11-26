@@ -58,24 +58,21 @@ void insertion_sort(sf::RenderWindow &window)
 
 void selection_sort(sf::RenderWindow &window)
 {
-    for (int i = 0; i < arrsize - 1; i++)
+    for (int i = 0; i < arrsize; i++)
     {
-        int min = i;
-        for (int j = i + 1; j < arrsize; j++)
+        for (int j = i; j < arrsize; j++)
         {
-            if (arr[j] < arr[min])
+            if (arr[j] < arr[i])
             {
-                min = j;
+                swap(arr[j], arr[i]);
+                visualize(window, j);
             }
         }
-        int temp = arr[i];
-        arr[i] = arr[min];
-        arr[min] = temp;
         visualize(window, i);
     }
 }
 
-void merge(int array[], int left, int half, int right)
+void merge(int array[], int left, int half, int right, sf::RenderWindow &window)
 {
     int temparr[right - left + 1];
     int index1 = left;
@@ -87,27 +84,32 @@ void merge(int array[], int left, int half, int right)
         if (array[index1] < array[index2])
         {
             temparr[newindex++] = array[index1++];
+            visualize(window,newindex);
         }
         else
         {
             temparr[newindex++] = array[index2++];
+            visualize(window,newindex);
         }
     }
     while (index1 <= half)
     {
         temparr[newindex++] = array[index1++];
+        visualize(window, newindex);
     }
     while (index2 <= right)
     {
         temparr[newindex++] = array[index2++];
+        visualize(window, newindex);
     }
     for (int i = 0; i < right - left + 1; i++)
-    { // maybe do left - right instead if gives an error or smth like that
+    { 
         array[left + i] = temparr[i];
+        visualize(window, left + i);
     }
 }
 
-void merge_sort(int array[], int left, int right)
+void merge_sort(int array[], int left, int right, sf::RenderWindow &window)
 {
     if (left >= right)
     {
@@ -116,9 +118,9 @@ void merge_sort(int array[], int left, int right)
 
     int half = int((left + right) / 2);
 
-    merge_sort(array, left, half);
-    merge_sort(array, half + 1, right);
-    merge(array, left, half, right);
+    merge_sort(array, left, half,window);
+    merge_sort(array, half + 1, right,window);
+    merge(array, left, half, right, window);
 }
 
 void bubble_sort(sf::RenderWindow &window)
@@ -132,12 +134,14 @@ void bubble_sort(sf::RenderWindow &window)
                 int temp = arr[j];
                 arr[j] = arr[j + 1];
                 arr[j + 1] = temp;
+                visualize(window, j + 1);
             }
         }
+        visualize(window, i);
     }
 }
 
-int partition(int array[], int left, int right)
+int partition(int array[], int left, int right, sf::RenderWindow &window)
 {
     int pivotvalue = array[right];
     int pivotindex = left;
@@ -149,24 +153,25 @@ int partition(int array[], int left, int right)
             array[i] = array[pivotindex];
             array[pivotindex] = temp;
             pivotindex++;
+            visualize(window, pivotindex);
         }
+        visualize(window, i);
     }
     int temp = array[pivotindex];
     array[pivotindex] = array[right];
     array[right] = temp;
-
     return pivotindex;
 }
 
-void quick_sort(int array[], int left, int right)
+void quick_sort(int array[], int left, int right, sf::RenderWindow &window)
 {
     if (left >= right)
     {
         return;
     }
-    int pivot = partition(array, left, right);
-    quick_sort(array, left, pivot - 1);
-    quick_sort(array, pivot + 1, right);
+    int pivot = partition(array, left, right, window);
+    quick_sort(array, left, pivot - 1, window);
+    quick_sort(array, pivot + 1, right, window);
 }
 
 void print_array()
@@ -221,11 +226,11 @@ int main()
             break;
 
         case '4':
-            merge_sort(arr, 0, arrsize - 1);
+            merge_sort(arr, 0, arrsize - 1, window);
             break;
 
         case '5':
-            quick_sort(arr, 0, arrsize - 1);
+            quick_sort(arr, 0, arrsize - 1, window);
             break;    
         
         default:
