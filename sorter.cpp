@@ -21,20 +21,26 @@ void fill_array()
     }
 }
 
-void visualize(sf::RenderWindow &window, int currentIndex = -1)
+void visualize(sf::RenderWindow &window, int pivotIndex = -1, int currentIndex = -1)
 {
     window.clear();
-
     for (int i = 0; i < arrsize; i++)
     {
         sf::RectangleShape rect(sf::Vector2f(10, arr[i]));
         rect.setPosition(i * 12, WINDOW_HEIGHT - arr[i]);
-        rect.setFillColor(i == currentIndex ? sf::Color::Red : sf::Color::Green);
+        if (i == pivotIndex)
+            rect.setFillColor(sf::Color::Blue); 
+        else if (i == currentIndex)
+            rect.setFillColor(sf::Color::Yellow);  
+        else
+            rect.setFillColor(sf::Color::Green);
         window.draw(rect);
     }
     window.display();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-}
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));  // Adjust as necessary
+
+}  
+
 
 void insertion_sort(sf::RenderWindow &window)
 {
@@ -43,16 +49,16 @@ void insertion_sort(sf::RenderWindow &window)
         int key = arr[i];
         int j = i - 1;
 
-        // Move elements greater than key to one position ahead
+        
         while (j >= 0 && arr[j] > key)
         {
             arr[j + 1] = arr[j];
             j--;
-            visualize(window, j + 1); // Visualize each step
+            visualize(window, j + 1); 
         }
 
         arr[j + 1] = key;
-        visualize(window, i); // Visualize after placing the key
+        visualize(window, i); 
     }
 }
 
@@ -131,9 +137,7 @@ void bubble_sort(sf::RenderWindow &window)
         {
             if (arr[j] > arr[j + 1])
             {
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+                swap(arr[j], arr[j+1]);
                 visualize(window, j + 1);
             }
         }
@@ -145,23 +149,28 @@ int partition(int array[], int left, int right, sf::RenderWindow &window)
 {
     int pivotvalue = array[right];
     int pivotindex = left;
+    
+
+    visualize(window, right); 
+    
     for (int i = left; i < right; i++)
     {
         if (array[i] <= pivotvalue)
         {
-            int temp = array[i];
-            array[i] = array[pivotindex];
-            array[pivotindex] = temp;
+            swap(array[i], array[pivotindex]);
             pivotindex++;
-            visualize(window, pivotindex);
+            visualize(window, pivotindex, i); 
         }
-        visualize(window, i);
     }
-    int temp = array[pivotindex];
-    array[pivotindex] = array[right];
-    array[right] = temp;
+
+ 
+    swap(array[pivotindex], array[right]);
+    visualize(window, pivotindex);  
+
     return pivotindex;
 }
+
+
 
 void quick_sort(int array[], int left, int right, sf::RenderWindow &window)
 {
